@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/InteractionGestuelleSmartphone.iml" filepath="$PROJECT_DIR$/InteractionGestuelleSmartphone.iml" />
+      <module fileurl="file://$PROJECT_DIR$/igs/igs.iml" filepath="$PROJECT_DIR$/igs/igs.iml" />
+    </modules>
+  </component>
+</project>
+
