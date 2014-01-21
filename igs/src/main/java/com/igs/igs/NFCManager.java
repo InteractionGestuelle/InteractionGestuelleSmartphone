@@ -26,10 +26,12 @@ public class NFCManager extends Activity {
     private static IntentFilter[] mIntentFiltersArray;
     private static String[][] mTechListsArray;
     private NfcAdapter mAdapter;
+    public static boolean etat;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(TAG, "onCreate, action : " + getIntent().getAction());
+        etat = false;
 
         //Get NFC ADAPTER (if NFC enabled)
         mAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -51,12 +53,7 @@ public class NFCManager extends Activity {
             //Clear intent
             setIntent(null);
         }
-    }
-
-    //Static initialization
-    static{
-
-        // add intent filter
+// add intent filter
         IntentFilter mndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
         IntentFilter mtech = new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED);
         IntentFilter mtag = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
@@ -78,6 +75,8 @@ public class NFCManager extends Activity {
                 new String[] {Ndef.class.getName()}};
     }
 
+
+
     private void getNewTag(Tag tag, Intent intent){
         if(tag == null) return;
         //Indicate to childs that a new tag has been detected
@@ -97,20 +96,24 @@ public class NFCManager extends Activity {
     //This function is called in child activities when a new tag is scanned.
     public void onNewTag(Tag tag){
         NfcA nfca = NfcA.get(tag);
+        Log.e("","NFC Action");
+
         // MifareClassic mfc=MifareClassic.get(tagFromintent);
+        PhoneManager phm = new PhoneManager(this);
+        if(!bin2hex(tag.getId()).equals(null)){
 
-
+            //phm.VolumeUp();
+            etat=true;
+        }
+        else{
+            etat = false;
+        }
+        phm.callEnd(etat);
+        Log.e("","Etat NFC :"+etat);
         Log.e("","TAG 1 : "+  bin2hex(tag.getId()));
     }
     static String bin2hex(byte[] data) {
         return String.format("%0" + (data.length * 2) + "X", new BigInteger(1,data));
-    }
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.i(TAG, "onPause");
-
-        mAdapter.disableForegroundDispatch(this);
     }
 
     @Override

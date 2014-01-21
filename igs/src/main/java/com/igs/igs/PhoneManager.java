@@ -1,9 +1,7 @@
 package com.igs.igs;
 
-import android.app.IntentService;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
+import android.media.AudioManager;
 import android.os.RemoteException;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -14,19 +12,26 @@ import com.android.internal.telephony.ITelephony;
 import java.lang.reflect.Method;
 
 /**
- * Created by novar_000 on 20/01/14.
+ * Created by novar_000 on 21/01/14.
  */
-public class PhoneAction extends BroadcastReceiver {
-    private static final String TAG = "Tag : ";
-    com.android.internal.telephony.ITelephony telephonyService;
+public class PhoneManager {
+    private static final String TAG = "TAG :";
+    private AudioManager audio;
+    Context mContext;
     TelephonyManager telephony;
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        Log.e("","JE SUIS LA 1");
-        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+    MyPhoneStateListener phoneListener;
+    public ITelephony telephonyService;
+    public PhoneManager(Context mContext){
+        this.mContext = mContext;
+        audio = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+        this.phoneListener = new MyPhoneStateListener();
+
+
+        Log.e("", "JE SUIS LA 1");
+        TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
         Log.e("","JE SUIS LA 2");
         MyPhoneStateListener phoneListener = new MyPhoneStateListener();
-        telephony = (TelephonyManager) context
+        telephony = (TelephonyManager) mContext
                 .getSystemService(Context.TELEPHONY_SERVICE);
         telephony.listen(phoneListener, PhoneStateListener.LISTEN_CALL_STATE);
 
@@ -40,10 +45,7 @@ public class PhoneAction extends BroadcastReceiver {
             telephonyService = (ITelephony) m.invoke(tm);
             Log.e("", "JE SUIS LA 3");
             Log.e("","etat : "+NFCManager.etat);
-            if(NFCManager.etat)
-            {
-                telephonyService.endCall();
-            }
+
             Log.e("","OOOOOOOOOOOOOOOOOOOO");
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,14 +56,27 @@ public class PhoneAction extends BroadcastReceiver {
         }
 
     }
-
-    public void endCall(){
-        try {
-            telephonyService.endCall();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+/*
+* Augmente le volume
+* */
+    public void VolumeUp(){
+        audio.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
+    }
+/*
+* Diminue le volume
+* */
+    public void VolumeDown(){
+        audio.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
     }
 
+    public void callEnd(boolean etat){
+        if(etat && this.phoneListener.state==2){
+            try {
+                telephonyService.endCall();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 }
