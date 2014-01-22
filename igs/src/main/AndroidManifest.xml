@@ -45,15 +45,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <receiver android:name="com.igs.igs.PhoneAction" >
-            <intent-filter>
-                  <action android:name="android.intent.action.PHONE_STATE" />
-                  <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
-                  <action android:name="android.intent.action.CALL" />
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-            </intent-filter>
 
-        </receiver>
         <uses-feature
             android:name="android.hardware.nfc"
             android:required="true" />

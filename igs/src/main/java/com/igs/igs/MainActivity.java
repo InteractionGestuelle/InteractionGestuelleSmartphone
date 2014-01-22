@@ -20,8 +20,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
          Intent intent = new Intent(MainActivity.this, NFCManager.class);
          MainActivity.this.startActivity(intent);
-        /*Intent intent = new Intent(MainActivity.this, NFCService.class);
-        startService(intent);*/
+
     }
 }
 

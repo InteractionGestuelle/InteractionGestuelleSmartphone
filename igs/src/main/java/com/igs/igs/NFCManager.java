@@ -26,12 +26,12 @@ public class NFCManager extends Activity {
     private static IntentFilter[] mIntentFiltersArray;
     private static String[][] mTechListsArray;
     private NfcAdapter mAdapter;
-    public static boolean etat;
+    private PhoneManager phm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(TAG, "onCreate, action : " + getIntent().getAction());
-        etat = false;
+        this.phm = new PhoneManager(this);
 
         //Get NFC ADAPTER (if NFC enabled)
         mAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -99,17 +99,14 @@ public class NFCManager extends Activity {
         Log.e("","NFC Action");
 
         // MifareClassic mfc=MifareClassic.get(tagFromintent);
-        PhoneManager phm = new PhoneManager(this);
+
         if(!bin2hex(tag.getId()).equals(null)){
 
             //phm.VolumeUp();
-            etat=true;
+            phm.callEnd();
         }
-        else{
-            etat = false;
-        }
-        phm.callEnd(etat);
-        Log.e("","Etat NFC :"+etat);
+
+
         Log.e("","TAG 1 : "+  bin2hex(tag.getId()));
     }
     static String bin2hex(byte[] data) {
