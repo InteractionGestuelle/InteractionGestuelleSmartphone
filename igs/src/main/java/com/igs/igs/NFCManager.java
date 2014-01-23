@@ -14,6 +14,7 @@ import android.nfc.tech.NfcV;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.io.IOException;
 import java.math.BigInteger;
 
 /**
@@ -29,7 +30,9 @@ public class NFCManager extends Activity {
     private PhoneManager phm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         Log.i(TAG, "onCreate, action : " + getIntent().getAction());
         this.phm = new PhoneManager(this);
 
@@ -103,7 +106,9 @@ public class NFCManager extends Activity {
         if(!bin2hex(tag.getId()).equals(null)){
 
             //phm.VolumeUp();
-            phm.callEnd();
+            //phm.answerCall();
+            //phm.readSms();
+            phm.answerCall();
         }
 
 
