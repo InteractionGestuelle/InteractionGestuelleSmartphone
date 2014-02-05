@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
@@ -12,9 +13,13 @@ import android.nfc.tech.NfcA;
 import android.nfc.tech.NfcB;
 import android.nfc.tech.NfcV;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.text.Editable;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
-import java.io.IOException;
 import java.math.BigInteger;
 
 /**
@@ -28,6 +33,9 @@ public class NFCManager extends Activity {
     private static String[][] mTechListsArray;
     private NfcAdapter mAdapter;
     private PhoneManager phm;
+    private Tag tag ;
+    Button btNum;
+    EditText txNum;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -35,7 +43,9 @@ public class NFCManager extends Activity {
 
         Log.i(TAG, "onCreate, action : " + getIntent().getAction());
         this.phm = new PhoneManager(this);
-
+        setContentView(R.layout.activity_main);
+        btNum = (Button) findViewById(R.id.numeroB);
+        txNum = (EditText) findViewById(R.id.numeroT);
         //Get NFC ADAPTER (if NFC enabled)
         mAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mAdapter == null) {
@@ -44,19 +54,20 @@ public class NFCManager extends Activity {
         // Android system will populate it with the details of the tag when it is scanned
         mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
-        //Launched by tag scan ?
-        Tag tag = getIntent().getParcelableExtra(NfcAdapter.EXTRA_TAG);
-        Log.e("","Info Tag : "+tag);
-        if(tag != null && (getIntent().getAction().equals(NfcAdapter.ACTION_NDEF_DISCOVERED)
-                || getIntent().getAction().equals(NfcAdapter.ACTION_TECH_DISCOVERED)
-                || getIntent().getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED))){
-            Log.i(TAG, "onCreate, tag found, calling onNewTag");
-            getNewTag(tag, getIntent());
 
-            //Clear intent
-            setIntent(null);
+        Parcelable[] rawMsgs = getIntent().getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+        if(rawMsgs!=null)
+        {
+            NdefMessage[] msgs = new NdefMessage[rawMsgs.length];
+            for (int i = 0; i < rawMsgs.length; i++) {    msgs[i] = (NdefMessage) rawMsgs[i];
+            Log.e("","Message" + msgs[i]);
+            }
+
+
         }
-// add intent filter
+
+        IntentFilter tagD = new IntentFilter("com.android.nfc.dhimpl.NativeNfcTag.mIsPresent");
+        Log.e("","PASSAGE TAG = "+tagD);
         IntentFilter mndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
         IntentFilter mtech = new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED);
         IntentFilter mtag = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
@@ -76,44 +87,45 @@ public class NFCManager extends Activity {
                 new String[] {NfcV.class.getName()},
                 new String[] {IsoDep.class.getName()},
                 new String[] {Ndef.class.getName()}};
+
+        btNum.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if(view == btNum){
+                    Editable text = txNum.getText();
+                    Log.e("","Numero : "+text);
+
+                }
+            }
+        });
     }
 
 
-
-    private void getNewTag(Tag tag, Intent intent){
-        if(tag == null) return;
-        //Indicate to childs that a new tag has been detected
-        onNewTag(tag);
-    }
 
     @Override
     public void onNewIntent(Intent intent){
         Log.i(TAG, "onNewIntent : " + intent.getAction());
 
         // get the tag object for the discovered tag
-        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-        Log.e("","TAG 0 : "+tag);
-        getNewTag(tag, intent);
-    }
-
-    //This function is called in child activities when a new tag is scanned.
-    public void onNewTag(Tag tag){
-        NfcA nfca = NfcA.get(tag);
-        Log.e("","NFC Action");
-
-        // MifareClassic mfc=MifareClassic.get(tagFromintent);
-
+        tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        Log.e("","TAG "+ bin2hex(tag.getId()));
+        Log.e("","TAG ID "+ bin2hex(tag.getId()).charAt(0));
         if(!bin2hex(tag.getId()).equals(null)){
 
             //phm.VolumeUp();
             //phm.answerCall();
             //phm.readSms();
-            phm.answerCall();
+           // phm.sendSMS();
+            //phm.answerCall();
+            //phm.sendSMS();
+            phm.musicPlayer();
         }
 
+        Log.e("", "TAG 0 : " + tag);
 
-        Log.e("","TAG 1 : "+  bin2hex(tag.getId()));
     }
+
     static String bin2hex(byte[] data) {
         return String.format("%0" + (data.length * 2) + "X", new BigInteger(1,data));
     }
@@ -124,5 +136,8 @@ public class NFCManager extends Activity {
         Log.i(TAG, "onResume");
         //treats all incoming intents when a tag is scanned and the appli is in foreground
         mAdapter.enableForegroundDispatch(this, mPendingIntent, mIntentFiltersArray, mTechListsArray);
+
     }
+
+
 }

@@ -8,15 +8,13 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.speech.tts.TextToSpeech;
 import android.telephony.PhoneStateListener;
+import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.view.KeyEvent;
 
 import com.android.internal.telephony.ITelephony;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Locale;
 
 /**
  * Created by novar_000 on 21/01/14.
@@ -31,9 +29,9 @@ public class PhoneManager implements TextToSpeech.OnInitListener {
     private String message; //message SMS
     private String numTel;  //Numero de tel
     public PhoneManager(Context mContext){
-        try {
+       /* try {
             Runtime.getRuntime().exec("su");
-            Runtime.getRuntime().exec("reboot");
+            Runtime.getRuntime().exec("reboot");*/
             this.mContext = mContext;
             audio = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 
@@ -59,8 +57,8 @@ public class PhoneManager implements TextToSpeech.OnInitListener {
                 Log.e(TAG, "Exception object: " + e);
 
             }
-        } catch (IOException e) {
-        }
+       /* } catch (IOException e) {
+        }*/
 
 
     }
@@ -90,8 +88,10 @@ public class PhoneManager implements TextToSpeech.OnInitListener {
             }
         }
     }
-
-    public void answerCall(){
+/*
+* Décroche l'appel (ATTENTION : seulement si l'application est installé en tant qu'application système)
+* */
+   /* public void answerCall(){
         // Simulate a press of the headset button to pick up the call
         if(this.phoneListener.state==1){
             try {
@@ -101,7 +101,7 @@ public class PhoneManager implements TextToSpeech.OnInitListener {
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 
     /*
     * Lecture message SMS
@@ -130,5 +130,14 @@ public class PhoneManager implements TextToSpeech.OnInitListener {
             tts.playSilence(500,TextToSpeech.QUEUE_ADD,null);
             tts.speak(message, TextToSpeech.QUEUE_ADD, null);
         }
+    }
+
+    public void sendSMS(){
+        SmsManager.getDefault().sendTextMessage("0033750374075", null, "test", null, null);
+
+    }
+    public void musicPlayer(){
+        Intent intent = new Intent(mContext, MusicActivity.class);
+        mContext.startActivity(intent);
     }
 }

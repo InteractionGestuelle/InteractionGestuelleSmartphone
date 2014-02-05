@@ -1,15 +1,24 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.igs.igs.MainActivity"
-    tools:ignore="MergeRootFrame" >
-    <TextView
-        android:id="@+id/mainText"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/numeroT"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:hint="@string/main_text"/>
+
+    <Button
+        android:id="@+id/numeroB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/main_text" />
-</FrameLayout>
+        android:layout_weight="1"
+        android:layout_marginLeft="25dip"
+        android:text="@string/numText"/>
+</LinearLayout>
 
 
