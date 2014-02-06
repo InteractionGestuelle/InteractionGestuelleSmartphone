@@ -28,12 +28,14 @@ public class PhoneManager implements TextToSpeech.OnInitListener {
     public ITelephony telephonyService;
     private String message; //message SMS
     private String numTel;  //Numero de tel
+    private Intent intent;
     public PhoneManager(Context mContext){
        /* try {
             Runtime.getRuntime().exec("su");
             Runtime.getRuntime().exec("reboot");*/
             this.mContext = mContext;
-            audio = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+        Log.e("","contexte : "+mContext.getSystemService(mContext.AUDIO_SERVICE));
+            audio = (AudioManager) mContext.getSystemService(mContext.AUDIO_SERVICE);
 
 
             TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
@@ -57,6 +59,10 @@ public class PhoneManager implements TextToSpeech.OnInitListener {
                 Log.e(TAG, "Exception object: " + e);
 
             }
+        intent = new Intent(mContext, MusicActivity.class);
+
+
+        mContext.startService(intent);
        /* } catch (IOException e) {
         }*/
 
@@ -134,10 +140,12 @@ public class PhoneManager implements TextToSpeech.OnInitListener {
 
     public void sendSMS(){
         SmsManager.getDefault().sendTextMessage("0033750374075", null, "test", null, null);
-
     }
-    public void musicPlayer(){
-        Intent intent = new Intent(mContext, MusicActivity.class);
-        mContext.startActivity(intent);
+
+    public void musicPlayer() {
+
+        mContext.stopService(intent);
+        intent.putExtra("action",1);
+        mContext.startService(intent);
     }
 }

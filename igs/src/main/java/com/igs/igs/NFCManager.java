@@ -14,9 +14,7 @@ import android.nfc.tech.NfcB;
 import android.nfc.tech.NfcV;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.text.Editable;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -34,8 +32,9 @@ public class NFCManager extends Activity {
     private NfcAdapter mAdapter;
     private PhoneManager phm;
     private Tag tag ;
-    Button btNum;
-    EditText txNum;
+    private Button btNum;
+    private EditText txNum;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -43,7 +42,7 @@ public class NFCManager extends Activity {
 
         Log.i(TAG, "onCreate, action : " + getIntent().getAction());
         this.phm = new PhoneManager(this);
-        setContentView(R.layout.activity_main);
+       // setContentView(R.layout.activity_main);
         btNum = (Button) findViewById(R.id.numeroB);
         txNum = (EditText) findViewById(R.id.numeroT);
         //Get NFC ADAPTER (if NFC enabled)
@@ -60,10 +59,8 @@ public class NFCManager extends Activity {
         {
             NdefMessage[] msgs = new NdefMessage[rawMsgs.length];
             for (int i = 0; i < rawMsgs.length; i++) {    msgs[i] = (NdefMessage) rawMsgs[i];
-            Log.e("","Message" + msgs[i]);
+                Log.e("","Message" + msgs[i]);
             }
-
-
         }
 
         IntentFilter tagD = new IntentFilter("com.android.nfc.dhimpl.NativeNfcTag.mIsPresent");
@@ -79,7 +76,6 @@ public class NFCManager extends Activity {
         catch (IntentFilter.MalformedMimeTypeException e) {
             throw new RuntimeException("fail", e);
         }
-
         mIntentFiltersArray = new IntentFilter[] {mndef,mtech,mtag };
         //array of TAG TECHNOLOGIES that your application wants to handle
         mTechListsArray = new String[][] { new String[] { NfcA.class.getName()},
@@ -87,43 +83,25 @@ public class NFCManager extends Activity {
                 new String[] {NfcV.class.getName()},
                 new String[] {IsoDep.class.getName()},
                 new String[] {Ndef.class.getName()}};
-
-        btNum.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                if(view == btNum){
-                    Editable text = txNum.getText();
-                    Log.e("","Numero : "+text);
-
-                }
-            }
-        });
     }
-
-
 
     @Override
     public void onNewIntent(Intent intent){
         Log.i(TAG, "onNewIntent : " + intent.getAction());
-
         // get the tag object for the discovered tag
         tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         Log.e("","TAG "+ bin2hex(tag.getId()));
         Log.e("","TAG ID "+ bin2hex(tag.getId()).charAt(0));
         if(!bin2hex(tag.getId()).equals(null)){
-
             //phm.VolumeUp();
             //phm.answerCall();
             //phm.readSms();
-           // phm.sendSMS();
+            // phm.sendSMS();
             //phm.answerCall();
             //phm.sendSMS();
             phm.musicPlayer();
         }
-
         Log.e("", "TAG 0 : " + tag);
-
     }
 
     static String bin2hex(byte[] data) {
@@ -136,8 +114,5 @@ public class NFCManager extends Activity {
         Log.i(TAG, "onResume");
         //treats all incoming intents when a tag is scanned and the appli is in foreground
         mAdapter.enableForegroundDispatch(this, mPendingIntent, mIntentFiltersArray, mTechListsArray);
-
     }
-
-
 }
