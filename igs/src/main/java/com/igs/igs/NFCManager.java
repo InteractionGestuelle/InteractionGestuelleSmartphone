@@ -2,8 +2,11 @@ package com.igs.igs;
 
 import android.app.Activity;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
@@ -13,8 +16,11 @@ import android.nfc.tech.NfcA;
 import android.nfc.tech.NfcB;
 import android.nfc.tech.NfcV;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.Parcelable;
+import android.text.Editable;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -34,11 +40,73 @@ public class NFCManager extends Activity {
     private Tag tag ;
     private Button btNum;
     private EditText txNum;
+    private MusicActivity mService;
+    private boolean mBound;
+    private boolean playMusic = false;
+    public final static String FAVORITE_NUM="num";
 
+
+
+    ServiceConnection mConnexion = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mBound = false;
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            mBound= true;
+            MusicActivity.LocalBinder binder = (MusicActivity.LocalBinder) iBinder;
+            mService = ((MusicActivity.LocalBinder) iBinder).getService();
+        }
+    };
+
+    @Override
+    protected void onStart() {
+
+        super.onStart();
+        Intent i = new Intent(this,MusicActivity.class);
+        bindService(i,mConnexion,BIND_AUTO_CREATE);
+
+    }
+
+   /* @Override
+    protected void onStop() {
+        super.onStop();
+        if(mBound){
+            mService.unbindService(mConnexion);
+            mBound=false;
+        }
+    }
+*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        // numero de tel;
+        SharedPreferences preferences = getSharedPreferences("Numero_Tel", MODE_PRIVATE);
+        final SharedPreferences.Editor editor = preferences.edit();
+        String numtest = preferences.getString("num", null);
+        if(numtest==null){
+            setContentView(R.layout.activity_main);
+            btNum = (Button) findViewById(R.id.numeroB);
+            txNum = (EditText) findViewById(R.id.numeroT);
+            btNum.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View view) {
+                    if(view == btNum){
+                        Editable text = txNum.getText();
+                        Log.e("", "Numero : " + text);
+                        editor.putString(FAVORITE_NUM, ""+text);
+                        editor.commit();
+                        btNum.setVisibility(View.GONE);
+                        txNum.setVisibility(View.GONE);
+                    }
+                }
+            });
+        }
 
         Log.i(TAG, "onCreate, action : " + getIntent().getAction());
         this.phm = new PhoneManager(this);
@@ -83,6 +151,9 @@ public class NFCManager extends Activity {
                 new String[] {NfcV.class.getName()},
                 new String[] {IsoDep.class.getName()},
                 new String[] {Ndef.class.getName()}};
+
+
+
     }
 
     @Override
@@ -98,8 +169,19 @@ public class NFCManager extends Activity {
             //phm.readSms();
             // phm.sendSMS();
             //phm.answerCall();
-            //phm.sendSMS();
-            phm.musicPlayer();
+            phm.sendSMS();
+            /*Log.e("","Musique play : "+playMusic);
+            if(bin2hex(tag.getId()).charAt(0) == '9'){
+                if(!playMusic){
+                    mService.play();
+                    playMusic = true;
+                }else{
+                    mService.pause();
+                    playMusic = false;
+                }
+
+            }*/
+
         }
         Log.e("", "TAG 0 : " + tag);
     }

@@ -7,10 +7,12 @@ import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
@@ -21,11 +23,7 @@ import java.util.ArrayList;
 
 public class MusicActivity extends IntentService {
 
-    /*private Button Play_pause , Next , Back , Stop;
-    private SeekBar VolumeUp;*/
-
-
-    /*Deuxieme*/
+    private IBinder mBnder = new LocalBinder();
 
     private MediaPlayer mediaPlayer;
     private ArrayList<MediaPlayer> mediaPlayer1;
@@ -112,7 +110,16 @@ public class MusicActivity extends IntentService {
 
 
     }
+    @Override
+    public IBinder onBind(Intent intent){
+        return mBnder;
+    }
 
+    public class LocalBinder extends Binder{
+           public MusicActivity getService(){
+               return MusicActivity.this;
+           }
+    }
 
     public void play(){
 

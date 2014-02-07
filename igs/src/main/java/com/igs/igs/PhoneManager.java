@@ -2,6 +2,7 @@ package com.igs.igs;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -11,6 +12,7 @@ import android.telephony.PhoneStateListener;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.internal.telephony.ITelephony;
 
@@ -29,6 +31,9 @@ public class PhoneManager implements TextToSpeech.OnInitListener {
     private String message; //message SMS
     private String numTel;  //Numero de tel
     private Intent intent;
+
+
+
     public PhoneManager(Context mContext){
        /* try {
             Runtime.getRuntime().exec("su");
@@ -139,13 +144,13 @@ public class PhoneManager implements TextToSpeech.OnInitListener {
     }
 
     public void sendSMS(){
-        SmsManager.getDefault().sendTextMessage("0033750374075", null, "test", null, null);
+        SharedPreferences prefs = mContext.getSharedPreferences("Numero_Tel",mContext.MODE_PRIVATE);
+        String num = prefs.getString("num", null);
+        if(num != null){
+            SmsManager.getDefault().sendTextMessage(num, null, "test", null, null);
+        }else{
+            Toast.makeText(mContext.getApplicationContext(), "Vous n'avez pas définit de numéro préalable.", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    public void musicPlayer() {
-
-        mContext.stopService(intent);
-        intent.putExtra("action",1);
-        mContext.startService(intent);
-    }
 }
