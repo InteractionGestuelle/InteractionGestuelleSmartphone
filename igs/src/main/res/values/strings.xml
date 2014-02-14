@@ -11,4 +11,5 @@
     <string name="button_Play_Pause">Play/Pause</string>
     <string name="hello_world">Now Playing:</string>
     <string name="inital_Time">0 min, 0 sec</string>
+    <string name="smsMessage">Message SMS</string>
 </resources>

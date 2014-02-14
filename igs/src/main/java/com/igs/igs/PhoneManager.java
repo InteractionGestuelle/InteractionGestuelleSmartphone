@@ -1,7 +1,6 @@
 package com.igs.igs;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.media.AudioManager;
@@ -30,16 +29,14 @@ public class PhoneManager implements TextToSpeech.OnInitListener {
     public ITelephony telephonyService;
     private String message; //message SMS
     private String numTel;  //Numero de tel
-    private Intent intent;
 
 
 
-    public PhoneManager(Context mContext){
+    public PhoneManager(final Context mContext){
        /* try {
             Runtime.getRuntime().exec("su");
             Runtime.getRuntime().exec("reboot");*/
             this.mContext = mContext;
-        Log.e("","contexte : "+mContext.getSystemService(mContext.AUDIO_SERVICE));
             audio = (AudioManager) mContext.getSystemService(mContext.AUDIO_SERVICE);
 
 
@@ -53,7 +50,6 @@ public class PhoneManager implements TextToSpeech.OnInitListener {
             try {
                 // Java reflection to gain access to TelephonyManager's
                 // ITelephony getter
-                Log.v(TAG, "Get getTeleService...");
                 Class c = Class.forName(tm.getClass().getName());
                 Method m = c.getDeclaredMethod("getITelephony");
                 m.setAccessible(true);
@@ -64,10 +60,9 @@ public class PhoneManager implements TextToSpeech.OnInitListener {
                 Log.e(TAG, "Exception object: " + e);
 
             }
-        intent = new Intent(mContext, MusicActivity.class);
 
 
-        mContext.startService(intent);
+
        /* } catch (IOException e) {
         }*/
 
@@ -78,6 +73,11 @@ public class PhoneManager implements TextToSpeech.OnInitListener {
 * */
     public void VolumeUp(){
         audio.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+
+        }
     }
 /*
 * Diminue le volume
@@ -123,9 +123,6 @@ public class PhoneManager implements TextToSpeech.OnInitListener {
         Uri myMessage = Uri.parse("content://sms");
         Cursor cursor = mContext.getContentResolver().query(myMessage, null, null, null, null);
         cursor.moveToFirst();
-        Log.e("", "LOG : " + tts);
-        Log.e("","SMS : "+cursor.getString(13).toString());
-        Log.e("","Log Speach : "+TextToSpeech.QUEUE_FLUSH);
         message = cursor.getString(13).toString();
         numTel = cursor.getString(3).toString();
     }
@@ -143,11 +140,12 @@ public class PhoneManager implements TextToSpeech.OnInitListener {
         }
     }
 
-    public void sendSMS(){
+    public void sendSOSSMS(){
         SharedPreferences prefs = mContext.getSharedPreferences("Numero_Tel",mContext.MODE_PRIVATE);
         String num = prefs.getString("num", null);
+        String sms = prefs.getString("sms", null);
         if(num != null){
-            SmsManager.getDefault().sendTextMessage(num, null, "test", null, null);
+            SmsManager.getDefault().sendTextMessage(num, null, sms, null, null);
         }else{
             Toast.makeText(mContext.getApplicationContext(), "Vous n'avez pas définit de numéro préalable.", Toast.LENGTH_SHORT).show();
         }

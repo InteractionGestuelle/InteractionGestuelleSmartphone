@@ -12,6 +12,13 @@
         android:inputType="number"
         android:hint="@string/main_text"/>
 
+    <EditText
+        android:id="@+id/smsTel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:hint="@string/smsMessage"
+        android:text="Si tu recois ce SMS c'est que je suis en danger." />
+
     <Button
         android:id="@+id/numeroB"
         android:layout_width="wrap_content"

@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.app.IntentService;
 import android.content.Intent;
 import android.database.Cursor;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
@@ -35,12 +34,12 @@ public class MusicActivity extends IntentService {
     public static int oneTimeOnly = 0;
     private int numMusicCurrent = 0;
     private int nbMusic=0;
+    public boolean finProgres =false;
     private ArrayList<String> musiqueTitre=new ArrayList<String>();
     File liste_file;//=new File(Environment.getExternalStorageDirectory().getAbsolutePath() +"/DCIM/Camera");
 
 
     /*Deuxieme*/
-    private AudioManager myAudioManager;
 
     public MusicActivity() {
         super("ServiceMusique");
@@ -56,13 +55,10 @@ public class MusicActivity extends IntentService {
         super.onCreate();
         mediaPlayer1= new ArrayList<MediaPlayer>();
 
+
         liste_file= Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_MUSIC);
         Log.e("", "CheminMusique  :  " + liste_file);
-
-        //nbMusic=liste_file.list().length;
-
-        //mediaPlayer = MediaPlayer.create(this, R.raw.music1);
 
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
 
@@ -105,6 +101,7 @@ public class MusicActivity extends IntentService {
             }
 
         }
+        finProgres =true;
         /*Log.e("","liste de musique 1  : " +  liste_file);
         Log.e("","liste de musique 1  : " +  liste_file+"/"+liste_file.list()[1]);*/
 
