@@ -85,13 +85,17 @@ public class PhoneManager implements TextToSpeech.OnInitListener {
     public void VolumeDown(){
         audio.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
     }
+
+    public int getStatment(){
+        return this.phoneListener.state;
+    }
 /*
 * Racroche l'appel si on est en cours de conversation
 * */
     public void callEnd(){
         //Si state = 2 alors on est en cours de conversation
 
-        if(this.phoneListener.state==2 || this.phoneListener.state==1){
+        if(this.phoneListener.state==2){
             try {
                 telephonyService.endCall();
             } catch (RemoteException e) {
@@ -102,7 +106,7 @@ public class PhoneManager implements TextToSpeech.OnInitListener {
 /*
 * Décroche l'appel (ATTENTION : seulement si l'application est installé en tant qu'application système)
 * */
-   /* public void answerCall(){
+    public void answerCall(){
         // Simulate a press of the headset button to pick up the call
         if(this.phoneListener.state==1){
             try {
@@ -112,7 +116,7 @@ public class PhoneManager implements TextToSpeech.OnInitListener {
                 e.printStackTrace();
             }
         }
-    }*/
+    }
 
     /*
     * Lecture message SMS

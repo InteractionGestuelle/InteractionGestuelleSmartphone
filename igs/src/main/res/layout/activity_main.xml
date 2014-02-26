@@ -5,7 +5,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content">
 
-    <EditText
+   <!-- <EditText
         android:id="@+id/numeroT"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -26,6 +26,27 @@
         android:layout_weight="1"
         android:layout_marginLeft="25dip"
         android:text="@string/numText"/>
+    <view class="com.igs.igs.Chrono"
+        android:id="@+id/chronometer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="64sp"
+        android:text="Chronometer"
+        android:gravity="center"/>
+    <Button
+    android:id="@+id/numBtGo"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:layout_marginLeft="25dip"
+    android:text="Go"/>-->
+    <TextView
+        android:layout_width="97dp"
+        android:layout_height="36dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="BONJOUR"
+        android:id="@+id/textView"
+        android:layout_gravity="center_horizontal" />
 </LinearLayout>
 
 
